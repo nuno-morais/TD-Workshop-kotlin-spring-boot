@@ -1,0 +1,323 @@
+{
+	"info": {
+		"_postman_id": "1557a84a-5193-4007-bf7e-5899e55e01cc",
+		"name": "Workshop-TodoList",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ToDos",
+			"item": [
+				{
+					"name": "GET /ToDos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "49275918-fb7f-4210-98e4-37d59c9ece08",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns a list of todos\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length >= 0).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/todos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /ToDos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "aba09a2e-fd52-4ca0-9c67-81d133f63ff4",
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201]);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"",
+									"pm.test(\"Checks the title\", function () {",
+									"    pm.expect(jsonData.title).to.eql(\"Dummy ToDo Title\");",
+									"});",
+									"",
+									"pm.test(\"Checks the user id\", function () {",
+									"    pm.expect(jsonData.user_id).to.eql(\"dummy_user_id\");",
+									"});",
+									"",
+									"pm.environment.set(\"ws_todo_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Dummy ToDo Title\",\n\t\"user_id\": \"dummy_user_id\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/todos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /ToDos/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "42cfdab1-7f93-4ab8-8800-1d25c030a559",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Checks the title\", function () {",
+									"    pm.expect(jsonData.title).to.eql(\"Dummy ToDo Title\");",
+									"});",
+									"",
+									"pm.test(\"Checks the user id\", function () {",
+									"    pm.expect(jsonData.user_id).to.eql(\"dummy_user_id\");",
+									"});",
+									"",
+									"pm.environment.set(\"ws_todo_entity\", JSON.stringify(jsonData));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/todos/{{ws_todo_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"todos",
+								"{{ws_todo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /ToDos/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8490e54e-1966-417d-8f44-adbe551865b9",
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});",
+									"",
+									"if (pm.response.code == 200) {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.test(\"Checks the title\", function () {",
+									"        pm.expect(jsonData.title).to.eql(\"Dummy ToDo Title Updated\");",
+									"    });",
+									"    ",
+									"    pm.test(\"Checks the user id\", function () {",
+									"        pm.expect(jsonData.user_id).to.eql(\"dummy_user_id\");",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e4080627-8507-4bce-b0b9-f3456f2c10f7",
+								"exec": [
+									"var todo = JSON.parse(pm.environment.get(\"ws_todo_entity\"));",
+									"todo.title = \"Dummy ToDo Title Updated\";",
+									"",
+									"pm.environment.set(\"ws_todo_entity\", JSON.stringify(todo));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{ws_todo_entity}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/todos/{{ws_todo_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"todos",
+								"{{ws_todo_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /ToDos/{id}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7a9918ca-2213-4ad9-93d1-2b0a08f3a50f",
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/todos/{{ws_todo_id}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"todos",
+								"{{ws_todo_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Stats",
+			"item": [
+				{
+					"name": "GET /stats?user_id={{userid}}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "49275918-fb7f-4210-98e4-37d59c9ece08",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns a map of stats\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length >= 0).to.eql(true);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/stats?user_id=dummy_user_id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"stats"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "dummy_user_id"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
